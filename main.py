@@ -1,6 +1,7 @@
 import cv2
 import math
 import mediapipe as mp
+import timeit
 
 def getAngle(a, b, c):
     ang = math.degrees(math.atan2(c[1]-b[1], c[0]-b[0]) - math.atan2(a[1]-b[1], a[0]-b[0]))
@@ -13,6 +14,7 @@ pose = mpPose.Pose()
 cap = cv2.VideoCapture("KneeBendVideo.mp4")
 bent = False
 counter=0
+start=0
 
 while True:
     #success variable tells us whether the image is being captured successfully.
@@ -35,8 +37,22 @@ while True:
         cv2.circle(img,points[23],15,(255,0,0))
         cv2.circle(img,points[25],15,(255,0,0))
         cv2.circle(img,points[27],15,(255,0,0))
-        print("---------------------")
-        print(getAngle(points[23],points[25],points[27]))
+        
+        angle = getAngle(points[23],points[25],points[27])
+        
+        start = timeit.default_timer()
+        if not bent and angle<140:
+            print("Bent")
+            bent=True
+            counter+=1
+        if angle>140:
+            bent=False
+
+    cv2.line(img, points[23], points[25], (0,0,0), 5)
+    cv2.line(img, points[25], points[27], (0,0,0), 5)
+    cv2.putText(img,str(counter),(100,150),cv2.FONT_HERSHEY_SCRIPT_SIMPLEX,2,(55,55,55),8)
+    cv2.putText(img,str(start),(300,150),cv2.FONT_HERSHEY_SCRIPT_SIMPLEX,2,(55,55,55),8)
+    cv2.putText(img,str(reptimer),(400,150),cv2.FONT_HERSHEY_SCRIPT_SIMPLEX,2,(55,55,55),8)
 
     cv2.imshow("img",img)
     cv2.waitKey(5)
