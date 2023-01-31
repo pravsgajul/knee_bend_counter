@@ -53,6 +53,8 @@ while True:
             if st_time==0 :
                 st_time = time.time_ns()
             ho_time = (time.time_ns()-st_time)/1000000000
+            if (ho_time<8.0):
+                cv2.putText(img,"Keep your knee bent",(350,100),cv2.FONT_HERSHEY_PLAIN,1,(0,0,0),2)
         if angle>140 and st_time != 0:
             en_time = time.time_ns()
             diff = (en_time - st_time)/1000000000
@@ -65,12 +67,12 @@ while True:
     cv2.line(img, points[23], points[25], (0,0,0), 5)
     cv2.line(img, points[25], points[27], (0,0,0), 5)
 
-    cv2.putText(img,"Rep Count",(100,50),cv2.FONT_HERSHEY_PLAIN,1,(0,0,0),1)
+    cv2.putText(img,"Rep Count",(100,60),cv2.FONT_HERSHEY_PLAIN,1,(0,0,0),2)
     cv2.putText(img,str(bended),(100,100),cv2.FONT_HERSHEY_SCRIPT_SIMPLEX,1,(0,0,0),4)
-    cv2.putText(img,"Hold Time",(250,50),cv2.FONT_HERSHEY_PLAIN,1,(0,0,0),1)
+    cv2.putText(img,"Hold Time",(250,60),cv2.FONT_HERSHEY_PLAIN,1,(0,0,0),2)
     cv2.putText(img,"%.2f"%ho_time,(250,100),cv2.FONT_HERSHEY_SCRIPT_SIMPLEX,1,(0,0,0),4)
-    cv2.putText(img,"Angle",(500,50),cv2.FONT_HERSHEY_PLAIN,1,(0,0,0),1)
-    cv2.putText(img,"%.2f"%angle,(500,100),cv2.FONT_HERSHEY_SCRIPT_SIMPLEX,1,(0,0,0),4)
+    cv2.putText(img,"Angle",(600,60),cv2.FONT_HERSHEY_PLAIN,1,(0,0,0),2)
+    cv2.putText(img,"%.2f"%angle,(600,100),cv2.FONT_HERSHEY_SCRIPT_SIMPLEX,1,(0,0,0),4)
 
     cv2.imshow("img",img)
     cv2.waitKey(5)
