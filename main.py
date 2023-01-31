@@ -1,8 +1,6 @@
 import cv2
 import math
 import mediapipe as mp
-import timeit
-from datetime import datetime
 import time
 
 def getAngle(a, b, c):
@@ -15,15 +13,11 @@ pose = mpPose.Pose()
 
 cap = cv2.VideoCapture("KneeBendVideo.mp4")
 
-start=0
-now=datetime.now()
-start_time=now.strftime("%H:%M:%S")
 st_time =0
 en_time = 0
 ho_time=0
 bended = 0
-end_time="0:0:0"
-duration=0
+threshold = 0
 
 while True:
     #success variable tells us whether the image is being captured successfully.
@@ -49,20 +43,28 @@ while True:
         
         angle = getAngle(points[23],points[25],points[27])
         
-        if angle<140: 
+        if angle<140 and angle>30: 
             if st_time==0 :
                 st_time = time.time_ns()
             ho_time = (time.time_ns()-st_time)/1000000000
+            threshold = ho_time
             if (ho_time<8.0):
                 cv2.putText(img,"Keep your knee bent",(350,100),cv2.FONT_HERSHEY_PLAIN,1,(0,0,0),2)
-        if angle>140 and st_time != 0:
+        if angle>140 and angle<250 and st_time != 0:
             en_time = time.time_ns()
+            trigger = (en_time-1000000000*ho_time)/1000000000
             diff = (en_time - st_time)/1000000000
-            if(diff >= 8.0 ) :
-                bended+= 1
+            if (trigger>10.0):
+                if(diff >= 8.0 ) :
+                    bended+= 1
+            if angle<30:
+                bended=bended
             st_time = 0
             en_time = 0
             ho_time = 0
+            
+            if (trigger>0.1):
+               print("issue") 
 
     cv2.line(img, points[23], points[25], (0,0,0), 5)
     cv2.line(img, points[25], points[27], (0,0,0), 5)
